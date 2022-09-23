@@ -1,5 +1,6 @@
 const cloudinary = require("../middleware/cloudinary");
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 
 module.exports = {
   getProfile: async (req, res) => {
@@ -20,8 +21,9 @@ module.exports = {
   },
   getPost: async (req, res) => {
     try {
-      const post = await Post.findById(req.params.id);
-      res.render("post.ejs", { post: post, user: req.user });
+      const post = await Post.findById(req.params.id); //finds unique id from user post, Is saying request a param like a variable and find the id.
+      const comments = await Comment.find({ post: req.params.id}).sort({ createdAt: "desc" }).lean();
+      res.render("post.ejs", { post: post, user: req.user, comments: comments }); //render view, and getting certain data from the database so the view can use it.
     } catch (err) {
       console.log(err);
     }
